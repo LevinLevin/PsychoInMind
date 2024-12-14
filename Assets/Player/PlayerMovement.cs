@@ -1,133 +1,158 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
-using UnityEngine.InputSystem;
-using Cinemachine;
 
-[RequireComponent(typeof(SpriteRenderer))]
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement")]
-    [SerializeField] float runSpeed = 10f;
-    [SerializeField] float jumpSpeed = 5f;
+    //Move
+    [SerializeField] Transform playerCamera;
+    [SerializeField] float mouseSensitivity = 3.5f;
+    [SerializeField] float walkSpeed = 6.0f;
 
+    //AnimationHeadBob
+    [Header("Animator")]
+    public Animator headBob;
 
-    [Header("Dash Variables")]
-    public float dashingVelocity = 14f;
-    public float dashingTime = 0.3f;
-    public float dashingCooldown = 0.5f;
-    private Vector2 dashingDir;
-    private bool isDashing;
-    private bool canDash = true;
+    //Sprint
+    [Header("Move values")]
+    [SerializeField] private float runSpeed;
+    [SerializeField] private float goSpeed;
+    [SerializeField] private float runBuildUp;
+    [SerializeField] private KeyCode runKey;
 
+    //Jumping
+    [Header("Jump values")]
+    [SerializeField] private AnimationCurve jumpFallOff;
+    [SerializeField] private float jumpMultiplier;
+    [SerializeField] private KeyCode jumpkey;
 
-    [Header ("References")]
-    Animator myAnimator;
-    Vector2 moveInput;
-    Rigidbody2D myrigidbody;
-    CapsuleCollider2D myBodyCollider;
-    BoxCollider2D myFeetCollider;
+    [SerializeField] float gravity = -13.0f;
 
-    float gravityAtStart;
+    [Header("Smoooooth")]
+    [SerializeField][Range(0.0f, 0.5f)] float moveSmoothTime = 0.3f;
+    [SerializeField][Range(0.0f, 0.5f)] float mouseSmoothTime = 0.03f;
 
-    //[Header ("CameraShake")]
-    //public CameraShake cameraShake;
-    //public float mag = 0.3f;
-    //public float tims = 0.4f;
+    [SerializeField] bool lockCursor = true;
 
+    float cameraPitch = 0.0f;
+    float velocityY = 0.0f;
+    CharacterController controller = null;
+
+    private CharacterController charController;
+
+    private bool isJumping;
+
+    Vector2 currentDir = Vector2.zero;
+    Vector2 currentDirVelocity = Vector2.zero;
+
+    Vector2 currentMouseDelta = Vector2.zero;
+    Vector2 currentMouseDeltaVelocity = Vector2.zero;
+
+    private void Awake()
+    {
+        charController = GetComponent<CharacterController>();
+    }
+
+    // Start is called before the first frame update
     void Start()
     {
-        myrigidbody = GetComponent<Rigidbody2D>();
-        myAnimator = GetComponent<Animator>();
-        myBodyCollider = GetComponent<CapsuleCollider2D>();
-        myFeetCollider = GetComponent<BoxCollider2D>();
-        gravityAtStart = myrigidbody.gravityScale;
+        controller = GetComponent<CharacterController>();
+        if (lockCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        headBob.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Run();       
-        FlipSprite();
+        UpdateMouseLook();
+        UpdateMovement();
 
-        var dashInput = Input.GetButtonDown("Dash");
-
-        if (dashInput && canDash)
+        if (walkSpeed > 2.5)
         {
-            isDashing = true;
-            canDash = false;
-            dashingDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-            if (dashingDir == Vector2.zero)
-            {
-                dashingDir = new Vector2(transform.localScale.x, 0f);
-            }
-            StartCoroutine(StopDashing());
-
+            headBob.SetBool("isRunning", true);
         }
-
-        if (isDashing)
+        else
         {
-            myrigidbody.velocity = dashingDir.normalized * dashingVelocity;
-            //StartCoroutine(cameraShake.Shake(tims, mag));
-            return;
-        } 
-    }
-
-    void OnMove(InputValue value)
-    {
-        moveInput = value.Get<Vector2>();
-    }
-
-    void OnJump(InputValue value)
-    {
-        if (!myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
-        {   
-            return; 
-        }
-
-        if (value.isPressed)
-        {
-            myrigidbody.velocity += new Vector2(1f, jumpSpeed);
-            myAnimator.SetTrigger("IsJumping");
-        } 
-    }
-
-    public void Run()
-    {
-        Vector2 PlayerVelocity = new Vector2 (moveInput.x * runSpeed, myrigidbody.velocity.y);
-        myrigidbody.velocity = PlayerVelocity;
-
-        bool isMyManJumping = Mathf.Abs(myrigidbody.velocity.y) > Mathf.Epsilon;  
-
-        bool isMyManRunning = Mathf.Abs(myrigidbody.velocity.x) > Mathf.Epsilon;
-        myAnimator.SetBool("IsRunning", isMyManRunning); 
-    }
-
-    void FlipSprite()
-    {
-        bool playerHorizontalSpeed = Mathf.Abs(myrigidbody.velocity.x) > Mathf.Epsilon;
-
-        if (playerHorizontalSpeed)
-        {
-            transform.localScale = new Vector2 (Mathf.Sign(myrigidbody.velocity.x), 1f);
-        }
-    }
-    
-    void JumpCheck()
-    {
-        if (myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
-        {
-            myAnimator.SetBool("IsJumping", false);
+            headBob.SetBool("isRunning", false);
         }
     }
 
-    private IEnumerator StopDashing()
+
+    //SprintMethod
+    private void SprintInput()
     {
-        yield return new WaitForSeconds(dashingTime);
-        isDashing = false;
-        yield return new WaitForSeconds(dashingCooldown);
-        canDash = true;
+        if (Input.GetKey(runKey))
+            walkSpeed = Mathf.Lerp(walkSpeed, runSpeed, Time.deltaTime * runBuildUp);
+        else
+            walkSpeed = Mathf.Lerp(walkSpeed, goSpeed, Time.deltaTime);
     }
-    
+
+
+
+    //JumpMethod
+    private void JumpInput()
+    {
+        if (Input.GetKeyDown(jumpkey) && !isJumping)
+        {
+            isJumping = true;
+            StartCoroutine(JumpEvent());
+        }
+    }
+
+    private IEnumerator JumpEvent()
+    {
+        charController.slopeLimit = 90.0f;
+        float timeInAir = 0.0f;
+        do
+        {
+            float jumpForce = jumpFallOff.Evaluate(timeInAir);
+            charController.Move(Vector3.up * jumpForce * jumpMultiplier * Time.deltaTime);
+
+            yield return null;
+        } while (!charController.isGrounded);
+
+        charController.slopeLimit = 90.0f;
+        isJumping = false;
+    }
+
+    void UpdateMouseLook()
+    {
+        Vector2 targetMouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+
+        currentMouseDelta = Vector2.SmoothDamp(currentMouseDelta, targetMouseDelta, ref currentMouseDeltaVelocity, mouseSmoothTime);
+
+        cameraPitch -= currentMouseDelta.y * mouseSensitivity;
+        cameraPitch = Mathf.Clamp(cameraPitch, -90.0f, 75.0f);
+
+        playerCamera.localEulerAngles = Vector3.right * cameraPitch;
+
+        transform.Rotate(Vector3.up * currentMouseDelta.x * mouseSensitivity);
+    }
+
+
+    //normalMovementMethod
+    void UpdateMovement()
+    {
+        Vector2 targetDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        targetDir.Normalize();
+
+        currentDir = Vector2.SmoothDamp(currentDir, targetDir, ref currentDirVelocity, moveSmoothTime);
+
+        if (controller.isGrounded)
+            velocityY = 0.0f;
+
+        velocityY += gravity * Time.deltaTime;
+
+
+        Vector3 velocity = (transform.forward * currentDir.y + transform.right * currentDir.x) * walkSpeed + Vector3.up * velocityY;
+
+        controller.Move(velocity * Time.deltaTime);
+
+        SprintInput();
+        JumpInput();
+
+    }
 }
