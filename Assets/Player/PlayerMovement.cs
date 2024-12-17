@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, ITakeDamage
 {
     //Move
     [SerializeField] Transform playerCamera;
@@ -154,5 +154,10 @@ public class PlayerMovement : MonoBehaviour
         SprintInput();
         JumpInput();
 
+    }
+
+    public void TakeDamage(float value)
+    {
+        //hallo ich kann schade nehmen und sterbe evtl, wenn du mich mit der richtigen waffe triffst
     }
 }

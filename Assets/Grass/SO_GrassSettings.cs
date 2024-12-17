@@ -49,7 +49,7 @@ public class SO_GrassSettings : ScriptableObject
     public float maxDrawDistance = 125;
 
 
-    public int cullingTreeDepth = 1;
+    public int cullingTreeDepth = 4;
 
     [Header("Other")]
     public UnityEngine.Rendering.ShadowCastingMode castShadow;

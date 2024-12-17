@@ -96,7 +96,7 @@ public class GrassComputeScript : MonoBehaviour
 #if UNITY_EDITOR
     SceneView view;
 
-    public void OnDestroy()
+    void OnDestroy()
     {
         // When the window is destroyed, remove the delegate
         // so that it will no longer do any drawing.

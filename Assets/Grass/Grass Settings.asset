@@ -12,27 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c5be20134b9e2a4d857aaf8f2b5d685, type: 3}
   m_Name: Grass Settings
   m_EditorClassIdentifier: 
-  shaderToUse: {fileID: 0}
-  materialToUse: {fileID: 0}
-  grassRandomHeightMin: 0
-  grassRandomHeightMax: 0
-  bladeRadius: 0.2
+  shaderToUse: {fileID: 7200000, guid: 7f973d32d2b0598408bd9b789e8c32c5, type: 3}
+  materialToUse: {fileID: 2100000, guid: 227e6de918e1768439cad8ab2a6d175c, type: 2}
+  grassRandomHeightMin: 0.6348316
+  grassRandomHeightMax: 0.16666669
+  bladeRadius: 1
   bladeForwardAmount: 0.38
   bladeCurveAmount: 2
-  bottomWidth: 0.1
-  MinWidth: 0.01
-  MinHeight: 0.01
-  MaxWidth: 1
-  MaxHeight: 1
-  windSpeed: 10
+  bottomWidth: 0.117
+  MinWidth: 0.20250002
+  MinHeight: 0.34
+  MaxWidth: 0.421
+  MaxHeight: 0.7
+  windSpeed: 2
   windStrength: 0.05
-  allowedBladesPerVertex: 4
-  allowedSegmentsPerBlade: 4
+  allowedBladesPerVertex: 7
+  allowedSegmentsPerBlade: 3
   affectStrength: 1
-  topTint: {r: 1, g: 1, b: 1, a: 1}
-  bottomTint: {r: 0, g: 0, b: 1, a: 1}
+  topTint: {r: 0, g: 0.4716981, b: 0.09988906, a: 1}
+  bottomTint: {r: 0, g: 0, b: 0, a: 1}
   drawBounds: 0
-  minFadeDistance: 40
-  maxDrawDistance: 125
-  cullingTreeDepth: 1
-  castShadow: 0
+  minFadeDistance: 10
+  maxDrawDistance: 70
+  cullingTreeDepth: 4
+  castShadow: 1
