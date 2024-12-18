@@ -2,7 +2,11 @@ using UnityEngine;
 
 public class TreeObject : MonoBehaviour, ITakeDamage
 {
+    private ObjectPooler objectPooler;
+
     public float health;
+
+    public ItemData itemToDrop;
 
     public void TakeDamage(float value)
     {
@@ -17,11 +21,14 @@ public class TreeObject : MonoBehaviour, ITakeDamage
     public void Fall()
     {
         Debug.Log("Tree destroyed");
-        Destroy(gameObject);
+        objectPooler.SpawnFromPool("Stick", transform.position, Quaternion.identity);
+        gameObject.SetActive(false);
     }
 
     void Start()
     {
+        objectPooler = ObjectPooler.Instance;
+
         health = 1f;
     }
 }

@@ -13,4 +13,9 @@ public class ItemData : ScriptableObject
     /// Counts how many objects the inventory has to add 
     /// </summary>
     public int Count;
+
+    /// <summary>
+    /// Is the Physical Object that is to see in the World
+    /// </summary>
+    public GameObject Object;
 }

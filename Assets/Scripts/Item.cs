@@ -6,22 +6,13 @@ public class Item : MonoBehaviour
 
     public const float radius = 1;
 
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        RaycastHit hit;
-        if (Physics.SphereCast(transform.position, radius, transform.forward, out hit))
+        if(other.TryGetComponent(out ICollectItems collectItems))
         {
-            if(hit.collider.TryGetComponent(out ICollectItems collectItems))
-            {
-                collectItems.CollectItem(_item);
-            }
+            collectItems.CollectItem(_item);
+            Debug.Log("Collected");
+            Destroy(gameObject);
         }
-    }
-
-    void OnDrawGizmos()
-    {
-        // Draw a sphere at the position of the GameObject this script is attached to
-        Gizmos.DrawSphere(transform.position, 1f);
-        Gizmos.color = Color.red;
     }
 }

@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: CookedMeat
   m_EditorClassIdentifier: 
   Name: Cooked Meat
+  Count: 1
+  Object: {fileID: 3967098738784144114, guid: 3e7a588ed7cdab049a65fcc876b8aedc, type: 3}
