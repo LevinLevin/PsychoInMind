@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - WeaponCam
+  - EnemyHead
+  - EnemyBody
+  - EnemyArmor
+  - EnemyCrit
   layers:
   - Default
   - TransparentFX
@@ -16,8 +21,8 @@ TagManager:
   - Tree
   - Stone
   - Player
-  - 
-  - 
+  - Stick
+  - SlimeBullet
   - 
   - 
   - 

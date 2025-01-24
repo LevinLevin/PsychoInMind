@@ -1,19 +1,42 @@
+using System.Diagnostics;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Weapons", menuName = "ScriptableObjects/Weapons", order = 1)]
+/// <summary>
+/// Defines all the values a inventory item needs
+/// </summary>
+[CreateAssetMenu(fileName = "InventoryItem", menuName = "Inventory/InventoryItem", order = 1)]
 public class ToolData : ScriptableObject
 {
     /// <summary>
     /// Name of the Tool or Weapon
     /// </summary>
     [Tooltip("Name of the Tool")]
-    public string ToolName;
+    public ItemEnum ToolName;
 
     /// <summary>
-    /// Has to be true if the Tool can kill enemies
+    /// Nescessary for every Collectable Item
     /// </summary>
-    [Tooltip("Can the tool kill enemies?")]
+    [Tooltip("How many Items are there in the Inventory")]
+    public int Count;
+
+    /// <summary>
+    /// Has to be true if it can make damage
+    /// </summary>
+    [Header("Any functionality?")]
+    [Tooltip("Can the tool make damage?")]
     public bool IsWeapon;
+
+    /// <summary>
+    /// has to be true, to interact with an object
+    /// </summary>
+    [Tooltip("Does it Interact with anything?")]
+    public bool IsInteractable;
+
+    /// <summary>
+    /// Is only true, if it doesnt make damage or cant be interacted with
+    /// </summary>
+    [Tooltip("Can the Item be consumed?")]
+    public bool IsConsumable;
 
     /// <summary>
     /// From how far can the target be hit
@@ -27,6 +50,11 @@ public class ToolData : ScriptableObject
     [Tooltip("How much damage deals the weapon?")]
     [Range(0.0f, 1.0f)]
     public float Damage;
+
+    /// <summary>
+    /// The visible texture, when the tool hits something
+    /// </summary>
+    public ItemEnum hitPrefab;
 
     /// <summary>
     /// How long do you have to wait until hit again
@@ -49,8 +77,22 @@ public class ToolData : ScriptableObject
     /// <summary>
     /// Weapons need a Magazine and it decides how many bullets can be fired before you have to reload
     /// </summary>
+    [Header("Need Magazine?")]
     [Tooltip("How big is the magazine?")]
     public int MagazineSize;
 
+    /// <summary>
+    /// Is the Ammo in the Gun
+    /// </summary>
     public int currentAmmo;
+
+    /// <summary>
+    /// Is the Ammo in the Inventory
+    /// </summary>
+    public int Ammo;
+
+    /// <summary>
+    /// The time it takes to reload the Magazine
+    /// </summary>
+    public float ReloadTime;
 }

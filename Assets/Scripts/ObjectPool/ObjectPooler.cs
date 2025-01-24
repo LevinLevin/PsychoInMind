@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Lets you create pools of object that can setActive the item when the player needs it withou using instantiate every time
+/// </summary>
 public class ObjectPooler : MonoBehaviour
 {
     [System.Serializable]
     public class Pool
     {
-        public string tag;
+        public ItemEnum tag;
         public GameObject prefab;
         public int size;
     }
@@ -31,29 +34,29 @@ public class ObjectPooler : MonoBehaviour
         {
             Queue<GameObject> objectPool = new Queue<GameObject>();
 
-            for(int  i = 0; i < pool.size; i++)
+            for (int i = 0; i < pool.size; i++)
             {
                 GameObject obj = Instantiate(pool.prefab);
                 obj.SetActive(false);
                 objectPool.Enqueue(obj);
             }
 
-            poolDictionary.Add(pool.tag, objectPool);
+            poolDictionary.Add(pool.tag.ToString(), objectPool);
         }
     }
 
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
+    public GameObject SpawnFromPool(ItemEnum tag, Vector3 position, Quaternion rotation)
     {
-        if (!poolDictionary.ContainsKey(tag))
+        if (!poolDictionary.ContainsKey(tag.ToString()))
             return null;
 
-        GameObject objectToSpawn = poolDictionary[tag].Dequeue();
+        GameObject objectToSpawn = poolDictionary[tag.ToString()].Dequeue();
 
         objectToSpawn.SetActive(true);
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
 
-        poolDictionary[tag].Enqueue(objectToSpawn);
+        poolDictionary[tag.ToString()].Enqueue(objectToSpawn);
 
         return objectToSpawn;
     }
